@@ -18,6 +18,16 @@ jobs:
           export PATH="$HOME/flutter/bin:$PATH"
           flutter doctor
 
+      - name: Decode GoogleService-Info.plist
+        env:
+          GOOGLE_SERVICE_INFO_PLIST: ${{ secrets.GOOGLE_SERVICE_INFO_PLIST }}
+        run: |
+          if [ -n "$GOOGLE_SERVICE_INFO_PLIST" ]; then
+            echo "$GOOGLE_SERVICE_INFO_PLIST" | base64 --decode > ios/Runner/GoogleService-Info.plist
+          else
+            echo "::warning::GoogleService-Info.plist secret not found. Build might fail if Firebase is used."
+          fi
+
       - name: Get dependencies
         run: flutter pub get
 

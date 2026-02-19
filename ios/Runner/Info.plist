@@ -4,6 +4,10 @@
 <dict>
     <key>NSCameraUsageDescription</key>
     <string>Camera access is required</string>
+    <key>NSPhotoLibraryUsageDescription</key>
+    <string>Photo library access is required to upload photos</string>
+    <key>NSMicrophoneUsageDescription</key>
+    <string>Microphone access is required for video recording</string>
 	<key>NSAppTransportSecurity</key>
 	<dict>
 		<key>NSAllowsArbitraryLoads</key>
