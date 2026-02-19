@@ -1,0 +1,67 @@
+{
+  "project_info": {
+    "project_number": "312865857869",
+    "project_id": "stop-chat-3ab7b",
+    "storage_bucket": "stop-chat-3ab7b.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:312865857869:android:437b55b4982a2d3e021704",
+        "android_client_info": {
+          "package_name": "com.example.bikespot"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCRdk2ozXBUtwo6b_xX6XRg6V1iGXA6amo"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:312865857869:android:59517618e8b031ad021704",
+        "android_client_info": {
+          "package_name": "com.example.chat_app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCRdk2ozXBUtwo6b_xX6XRg6V1iGXA6amo"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:312865857869:android:ec27eb2a9164e4cc021704",
+        "android_client_info": {
+          "package_name": "com.example.chitychat"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCRdk2ozXBUtwo6b_xX6XRg6V1iGXA6amo"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
