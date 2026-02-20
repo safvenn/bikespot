@@ -32,15 +32,18 @@ final filteredBikesProvider = Provider<List<Map<String, dynamic>>>((ref) {
     data: (snapshot) {
       if (snapshot.docs.isEmpty) return [];
 
-      return snapshot.docs.map((doc) {
-        var data = doc.data() as Map<String, dynamic>;
-        data['id'] = doc.id;
-        return data;
-      }).where((bike) {
-        final name = (bike['name']?.toString() ?? '').toLowerCase();
-        final plate = (bike['No.plate']?.toString() ?? '').toLowerCase();
-        return name.contains(searchQuery) || plate.contains(searchQuery);
-      }).toList();
+      return snapshot.docs
+          .map((doc) {
+            var data = doc.data() as Map<String, dynamic>;
+            data['id'] = doc.id;
+            return data;
+          })
+          .where((bike) {
+            final name = (bike['name']?.toString() ?? '').toLowerCase();
+            final plate = (bike['No.plate']?.toString() ?? '').toLowerCase();
+            return name.contains(searchQuery) || plate.contains(searchQuery);
+          })
+          .toList();
     },
     error: (_, __) => [],
     loading: () => [],
@@ -52,7 +55,6 @@ class Home extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-
     final bikesAsync = ref.watch(bikesStreamProvider);
 
     final totalBikesCount = bikesAsync.asData?.value.docs.length ?? 0;
@@ -160,7 +162,6 @@ class Home extends ConsumerWidget {
   }
 }
 
-
 class BikeCard extends StatelessWidget {
   final Map<String, dynamic> bikeData;
 
@@ -177,8 +178,8 @@ class BikeCard extends StatelessWidget {
           imageString,
           fit: BoxFit.cover,
           width: double.infinity,
-          errorBuilder:
-              (context, error, stackTrace) => const Icon(Icons.broken_image),
+          errorBuilder: (context, error, stackTrace) =>
+              const Icon(Icons.broken_image),
         );
       } else {
         try {
@@ -186,8 +187,8 @@ class BikeCard extends StatelessWidget {
             base64Decode(imageString),
             fit: BoxFit.cover,
             width: double.infinity,
-            errorBuilder:
-                (context, error, stackTrace) => const Icon(Icons.broken_image),
+            errorBuilder: (context, error, stackTrace) =>
+                const Icon(Icons.broken_image),
           );
         } catch (e) {
           imageWidget = const Icon(Icons.broken_image);
@@ -223,8 +224,7 @@ class BikeCard extends StatelessWidget {
                       children: [
                         Expanded(
                           child: Text(
-                            (bikeData['name']?.toString() ??
-                                    'NO NAME')
+                            (bikeData['name']?.toString() ?? 'NO NAME')
                                 .toUpperCase(),
                             style: const TextStyle(
                               fontSize: 18,
@@ -246,8 +246,7 @@ class BikeCard extends StatelessWidget {
                             ),
                           ),
                           child: Text(
-                            (bikeData['No.plate']?.toString() ??
-                                    'NO PLATE')
+                            (bikeData['No.plate']?.toString() ?? 'NO PLATE')
                                 .toUpperCase(),
                             style: TextStyle(
                               fontSize: 12,
@@ -258,6 +257,16 @@ class BikeCard extends StatelessWidget {
                         ),
                       ],
                     ),
+                    const SizedBox(height: 4),
+                    Text(
+                      (bikeData['model']?.toString() ?? '').toUpperCase(),
+                      style: TextStyle(
+                        fontSize: 14,
+                        color: Colors.grey[700],
+                        fontWeight: FontWeight.w600,
+                      ),
+                      overflow: TextOverflow.ellipsis,
+                    ),
                     const SizedBox(height: 8),
                     Text(
                       NumberFormat.currency(
@@ -266,8 +275,10 @@ class BikeCard extends StatelessWidget {
                         decimalDigits: 0,
                       ).format(
                         double.tryParse(
-                              (bikeData['price']?.toString() ?? '0')
-                                  .replaceAll(',', ''),
+                              (bikeData['price']?.toString() ?? '0').replaceAll(
+                                ',',
+                                '',
+                              ),
                             ) ??
                             0,
                       ),
@@ -297,36 +308,34 @@ class BikeCard extends StatelessWidget {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder:
-                            (context) => AddBikePage(
-                              bikeData: bikeData,
-                              bikeId: bikeData['id'],
-                            ),
+                        builder: (context) => AddBikePage(
+                          bikeData: bikeData,
+                          bikeId: bikeData['id'],
+                        ),
                       ),
                     );
                   } else if (value == 'delete') {
                     final shouldDelete = await showDialog<bool>(
                       context: context,
-                      builder:
-                          (context) => AlertDialog(
-                            title: const Text('Delete Bike'),
-                            content: const Text(
-                              'Are you sure you want to delete this bike?',
-                            ),
-                            actions: [
-                              TextButton(
-                                onPressed: () => Navigator.pop(context, false),
-                                child: const Text('Cancel'),
-                              ),
-                              TextButton(
-                                onPressed: () => Navigator.pop(context, true),
-                                child: const Text(
-                                  'Delete',
-                                  style: TextStyle(color: Colors.red),
-                                ),
-                              ),
-                            ],
+                      builder: (context) => AlertDialog(
+                        title: const Text('Delete Bike'),
+                        content: const Text(
+                          'Are you sure you want to delete this bike?',
+                        ),
+                        actions: [
+                          TextButton(
+                            onPressed: () => Navigator.pop(context, false),
+                            child: const Text('Cancel'),
                           ),
+                          TextButton(
+                            onPressed: () => Navigator.pop(context, true),
+                            child: const Text(
+                              'Delete',
+                              style: TextStyle(color: Colors.red),
+                            ),
+                          ),
+                        ],
+                      ),
                     );
 
                     if (shouldDelete == true) {
@@ -337,29 +346,28 @@ class BikeCard extends StatelessWidget {
                     }
                   }
                 },
-                itemBuilder:
-                    (BuildContext context) => [
-                      const PopupMenuItem<String>(
-                        value: 'edit',
-                        child: Row(
-                          children: [
-                            Icon(Icons.edit, color: Colors.blue),
-                            SizedBox(width: 8),
-                            Text('Edit'),
-                          ],
-                        ),
-                      ),
-                      const PopupMenuItem<String>(
-                        value: 'delete',
-                        child: Row(
-                          children: [
-                            Icon(Icons.delete, color: Colors.red),
-                            SizedBox(width: 8),
-                            Text('Delete'),
-                          ],
-                        ),
-                      ),
-                    ],
+                itemBuilder: (BuildContext context) => [
+                  const PopupMenuItem<String>(
+                    value: 'edit',
+                    child: Row(
+                      children: [
+                        Icon(Icons.edit, color: Colors.blue),
+                        SizedBox(width: 8),
+                        Text('Edit'),
+                      ],
+                    ),
+                  ),
+                  const PopupMenuItem<String>(
+                    value: 'delete',
+                    child: Row(
+                      children: [
+                        Icon(Icons.delete, color: Colors.red),
+                        SizedBox(width: 8),
+                        Text('Delete'),
+                      ],
+                    ),
+                  ),
+                ],
               ),
             ),
           ),

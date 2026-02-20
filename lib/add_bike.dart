@@ -17,6 +17,7 @@ class AddBikePage extends StatefulWidget {
 class _AddBikePageState extends State<AddBikePage> {
   final _formKey = GlobalKey<FormState>();
   final TextEditingController _nameController = TextEditingController();
+  final TextEditingController _modelController = TextEditingController();
   final TextEditingController _priceController = TextEditingController();
   final TextEditingController _plateController = TextEditingController();
 
@@ -30,6 +31,7 @@ class _AddBikePageState extends State<AddBikePage> {
     super.initState();
     if (widget.bikeData != null) {
       _nameController.text = widget.bikeData!['name'] ?? '';
+      _modelController.text = widget.bikeData!['model'] ?? '';
       _priceController.text = widget.bikeData!['price'] ?? '';
       _plateController.text = widget.bikeData!['No.plate'] ?? '';
       _base64Image = widget.bikeData!['image'];
@@ -78,6 +80,7 @@ class _AddBikePageState extends State<AddBikePage> {
       try {
         final bikeData = {
           'name': _nameController.text,
+          'model': _modelController.text,
           'price': _priceController.text,
           'No.plate': _plateController.text,
           'image': _base64Image,
@@ -128,6 +131,7 @@ class _AddBikePageState extends State<AddBikePage> {
   @override
   void dispose() {
     _nameController.dispose();
+    _modelController.dispose();
     _priceController.dispose();
     _plateController.dispose();
     super.dispose();
@@ -265,6 +269,25 @@ class _AddBikePageState extends State<AddBikePage> {
                               validator: (value) {
                                 if (value == null || value.isEmpty) {
                                   return 'Please enter a name';
+                                }
+                                return null;
+                              },
+                            ),
+                            const SizedBox(height: 16),
+                            TextFormField(
+                              controller: _modelController,
+                              decoration: InputDecoration(
+                                labelText: 'Model',
+                                prefixIcon: const Icon(Icons.category),
+                                border: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(12),
+                                ),
+                                filled: true,
+                                fillColor: Colors.grey[50],
+                              ),
+                              validator: (value) {
+                                if (value == null || value.isEmpty) {
+                                  return 'Please enter the model';
                                 }
                                 return null;
                               },
