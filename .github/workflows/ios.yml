@@ -11,12 +11,10 @@ jobs:
     steps:
       - uses: actions/checkout@v3
 
-      - name: Install Flutter
-        run: |
-          git clone https://github.com/flutter/flutter.git --depth 1 -b stable $HOME/flutter
-          echo "$HOME/flutter/bin" >> $GITHUB_PATH
-          export PATH="$HOME/flutter/bin:$PATH"
-          flutter doctor
+      - name: Set up Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: stable
 
       - name: Decode GoogleService-Info.plist
         env:
@@ -28,17 +26,42 @@ jobs:
             echo "::warning::GoogleService-Info.plist secret not found. Build might fail if Firebase is used."
           fi
 
+      - name: Install CocoaPods
+        run: |
+          if ! command -v pod >/dev/null 2>&1; then
+            sudo gem install cocoapods
+          fi
+          cd ios || exit 0
+          pod install --repo-update || true
+
       - name: Get dependencies
         run: flutter pub get
 
-      - name: Build iOS
-        run: flutter build ios --release --no-codesign
-
-      - name: Create IPA
+      - name: Build iOS IPA
         run: |
-          mkdir -p Payload
-          cp -R build/ios/iphoneos/Runner.app Payload
-          zip -r Runner.ipa Payload
+          set -e
+          # Prefer `flutter build ipa`; fall back to `flutter build ios` + manual packaging
+          if flutter build ipa --no-codesign --export-method ad-hoc; then
+            echo "IPA created by flutter"
+          else
+            echo "flutter build ipa failed; building ios and packaging manually"
+            flutter build ios --release --no-codesign
+          fi
+
+      - name: Package IPA
+        run: |
+          # Prefer the ipa produced by `flutter build ipa`
+          if [ -f build/ios/ipa/Runner.ipa ]; then
+            cp build/ios/ipa/Runner.ipa Runner.ipa
+          elif ls build/ios/ipa/*.ipa 1> /dev/null 2>&1; then
+            cp build/ios/ipa/*.ipa Runner.ipa
+          elif [ -d build/ios/iphoneos/Runner.app ]; then
+            mkdir -p Payload
+            cp -R build/ios/iphoneos/Runner.app Payload
+            zip -r Runner.ipa Payload
+          else
+            echo "No IPA or .app found in build output" && exit 1
+          fi
 
       - uses: actions/upload-artifact@v4
         with:
